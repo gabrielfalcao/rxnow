@@ -45,11 +45,16 @@ fmt:
 check:
 	cargo check --all-targets
 
-run:
+
+run: run-colorful
+
+run-colorful:
 	$(RXNOW_RUN) --help
 	$(RXNOW_RUN) 'rx(now)' Cargo.toml
-	git remote show -n origin | $(RXNOW_RUN) '((https://|git@)github.com[/:].*[.]git)'
-	git remote show -n origin | $(RXNOW_RUN) '((https://|git@)github.com[/:].*[.]git)' --replace "foobar$$2"
+	git remote show -n origin | $(RXNOW_RUN) '((https://|git@)(((github)(.(com)))[/:].*)[.]git)'
+	git remote show -n origin | $(RXNOW_RUN) '((https://|git@)(((github)(.(com)))[/:].*)[.]git)' --replace 'foobar$$3'
+
+run-colorless:
 	$(RXNOW_RUN) 'rx(now)' --colorless Cargo.toml
 	git remote show -n origin | $(RXNOW_RUN) --colorless '((https://|git@)github.com[/:].*[.]git)'
 	git remote show -n origin | $(RXNOW_RUN) --colorless '((https://|git@)github.com[/:].*[.]git)' --replace "foobar$$2"
@@ -57,3 +62,5 @@ run:
 
 build test: check
 	cargo $@
+
+.PHONY: all build test run run-colorless run-colorgun check fmt fix cls cleanx clean debug release

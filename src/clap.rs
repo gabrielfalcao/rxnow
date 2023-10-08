@@ -1,7 +1,6 @@
 // use crate::coreio::ensure_dir_exists;
 // use crate::errors::Error;
-use clap::{Parser, Args};
-
+use clap::{Args, Parser};
 
 #[derive(Args, Debug)]
 #[group(multiple = false)]
@@ -31,10 +30,14 @@ pub struct HighlightOps {
 #[derive(Args, Debug)]
 #[group(multiple = false)]
 pub struct AesOps {
-    #[arg(short = 'r', long = "replace", value_name = "REPLACEMENT", help = "replace (ft. group matching)")]
+    #[arg(
+        short = 'r',
+        long = "replace",
+        value_name = "REPLACEMENT",
+        help = "replace (ft. group matching)"
+    )]
     pub fable: Option<String>,
 }
-
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -43,7 +46,10 @@ pub struct Cli {
     #[arg(value_name = "EXPRESSION", help = "the regex pattern")]
     pub rgx: String,
 
-    #[arg(value_name = "FILENAMES", help = "list of files wherein search shall happen. Defaults to stdin if none is provided")]
+    #[arg(
+        value_name = "FILENAMES",
+        help = "list of files wherein search shall happen. Defaults to stdin if none is provided"
+    )]
     pub filenames: Vec<String>,
 
     #[command(flatten)]

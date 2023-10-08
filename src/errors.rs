@@ -1,7 +1,6 @@
+use iocore::Exception;
 use std::env::VarError;
 use std::string::FromUtf8Error;
-use iocore::Exception;
-
 
 #[derive(Debug)]
 pub enum Error {
@@ -13,7 +12,6 @@ pub enum Error {
     RegexError(regex::Error),
     VarError(VarError),
 }
-
 
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -28,7 +26,6 @@ impl std::fmt::Display for Error {
         }
     }
 }
-
 
 impl std::error::Error for Error {}
 

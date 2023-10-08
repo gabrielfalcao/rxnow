@@ -18,7 +18,7 @@ pub fn match_reader(
     for (idx, line) in reader.lines().enumerate() {
         let mut hline = line?.clone();
         if re.find(hline.as_str()) == None {
-            continue
+            continue;
         }
         for matches in re.captures_iter(&hline.clone()) {
             let mut found = matches.get(0).ok_or(hline.clone())?.as_str().to_string();
@@ -27,7 +27,10 @@ pub fn match_reader(
                     found.clone().as_str(),
                     &if let Some(more) = &aesops.fable {
                         let mut fnd = String::new();
-                        matches.expand(&format!("{}", style(more).color256(hops.group_color)), &mut fnd);
+                        matches.expand(
+                            &format!("{}", style(more).color256(hops.group_color)),
+                            &mut fnd,
+                        );
                         fnd
                     } else {
                         format!("{}", style(found).color256(hops.match_color))
@@ -45,9 +48,6 @@ pub fn match_reader(
                     },
                 );
             }
-            // for found in subs.iter() {
-            //     hline = hline.replace(found, &format!("{}", style(found).color256(hops.match_color)));
-            // }
             for (idx, cap) in matches.iter().enumerate() {
                 let found = cap.unwrap().as_str();
                 if !hops.colorless {
