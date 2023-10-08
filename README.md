@@ -2,6 +2,20 @@
 
 Experimental drop-in replacement for GNU/Sed
 
+## Install
+
+
+```bash
+cargo install rxnow
+```
+
+
+## Examples
+
+
+```bash
+curl -qs https://raw.githubusercontent.com/gabrielfalcao/rxnow/main/README.md | rxnow ".*(curl.*)$" --replace '$1'
+```
 
 
 ```bash

@@ -2,6 +2,13 @@
 name = "rxnow"
 version = "0.0.0"
 edition = "2021"
+license = "GPL-3.0-or-later"
+authors = ["Gabriel Falcão <gabriel@nacaolivre.org>"]
+description = "aims at sorta-kinda drop-in replace GNU/Sed et al."
+documentation = "https://docs.rs/rxnow"
+readme = "README.md"
+homepage = "https://github.com/gabrielfalcao/rxnow"
+exclude = ["tests"]
 
 [dependencies]
 clap = { version = "4.4.6", features = ["derive", "unicode", "env", "wrap_help", "string"] }
