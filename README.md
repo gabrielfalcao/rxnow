@@ -1,6 +1,8 @@
 # rxnow
 
-![nightingale.png](nightingale.png)
+![nightingale.svg](nightingale.svg)
+
+
 Experimental drop-in replacement for GNU/Sed
 
 ## Install
