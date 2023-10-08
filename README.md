@@ -17,7 +17,7 @@ cargo install rxnow
 
 
 ```bash
-curl -qs https://raw.githubusercontent.com/gabrielfalcao/rxnow/main/README.md | rxnow ".*(curl.*)$" --replace '$1'
+curl -qs https://raw.githubusercontent.com/gabrielfalcao/rxnow/main/README.md | rxnow ".*(curl.*?[.]md).*" --replace '$1'
 ```
 
 

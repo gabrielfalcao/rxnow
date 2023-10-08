@@ -17,6 +17,9 @@ pub fn match_reader(
 ) -> Result<(), Error> {
     for (idx, line) in reader.lines().enumerate() {
         let mut hline = line?.clone();
+        if re.find(hline.as_str()) == None {
+            continue
+        }
         for matches in re.captures_iter(&hline.clone()) {
             let mut found = matches.get(0).ok_or(hline.clone())?.as_str().to_string();
             if !hops.colorless {
