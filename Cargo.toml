@@ -1,0 +1,14 @@
+[package]
+name = "rxnow"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.4.6", features = ["derive", "unicode", "env", "wrap_help", "string"] }
+console = "0.15.7"
+iocore = "0.1.10"
+regex = { version = "1.9.6", features = ["use_std", "pattern", "logging"] }
+
+[lib]
+name = "rxnow"
+path = "src/lib.rs"
