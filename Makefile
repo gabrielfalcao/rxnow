@@ -1,4 +1,4 @@
-INSTALL_PATH			:=$(HOME)/usr/libexec/
+INSTALL_PATH			:=$(HOME)/usr/libexec
 RXNOW_NAME			:=rxnow
 RXNOW_VERSION			:=$(shell cargo run -- --version | awk '{ print $$NF }')
 RXNOW_DEBUG_EXEC		:=target/debug/$(RXNOW_NAME)

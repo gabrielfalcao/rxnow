@@ -80,8 +80,19 @@ pub fn match_reader(
 
 fn main() -> Result<(), Error> {
     let args = Cli::parse();
-
     let re = Regex::new(&args.rgx)?;
+
+    let stdin = io::stdin();
+    let mut handle = stdin.lock();
+    if !handle.is_terminal() {
+        match_reader(&re, &mut handle, "stdin", &args.hops, &args.aesops)?;
+    }
+    let filenames = if args.filenames.len() == 0 {
+        vec![format!("{}", std::env::current_dir()?.display())]
+    } else {
+        args.filenames.clone()
+    };
+
     if args.filenames.len() > 0 {
         for filename in args.filenames.iter() {
             let path = absolute_path(filename.as_str())?;
@@ -120,14 +131,6 @@ fn main() -> Result<(), Error> {
             }
         }
     } else {
-        let stdin = io::stdin();
-        let mut handle = stdin.lock();
-        if handle.is_terminal() {
-            eprintln!("stdin appears to be a tty");
-            std::process::exit(0x54);
-        } else {
-            match_reader(&re, &mut handle, "stdin", &args.hops, &args.aesops)?;
-        }
     }
     Ok(())
 }
