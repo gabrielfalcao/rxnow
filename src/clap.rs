@@ -8,8 +8,8 @@ pub struct HighlightOps {
     #[arg(short, long)]
     pub newline: bool,
 
-    #[arg(short = 'H', long)]
-    pub hide_filename: bool,
+    #[arg(short = 's', long = "show-filename")]
+    pub show_filename: bool,
 
     #[arg(short = 'c', long)]
     pub colorless: bool,

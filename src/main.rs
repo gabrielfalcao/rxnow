@@ -69,10 +69,10 @@ pub fn match_reader(
                 }
             }
         }
-        if hops.hide_filename {
-            println!("{}", hline);
-        } else {
+        if hops.show_filename {
             println!("{}:{}:{}", reader_name, idx, hline);
+        } else {
+            println!("{}", hline);
         }
     }
     Ok(())
