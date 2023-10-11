@@ -1,6 +1,6 @@
 # rxnow
 
-![nightingale.svg](nightingale.svg)
+![docs/nightingale.svg](docs/nightingale.svg)
 
 
 Experimental drop-in replacement for GNU/Sed
@@ -24,6 +24,8 @@ curl -qs https://raw.githubusercontent.com/gabrielfalcao/rxnow/main/README.md | 
 ```bash
 $ rxnow --help
 
+aims at sorta-kinda drop-in replace GNU/Sed et al.
+
 Usage: rxnow [OPTIONS] <EXPRESSION> [FILENAMES]...
 
 Arguments:
@@ -33,8 +35,9 @@ Arguments:
 Options:
   -r, --replace <REPLACEMENT>      replace (ft. group matching)
   -n, --newline
-  -H, --hide-filename
+  -s, --show-filename
   -c, --colorless
+  -d, --delete                     deletes portions of input-data matching the given expression
   -l, --files-with-matches
   -C, --context <NUM>
   -g, --group-color <GROUP_COLOR>  [default: 220]
