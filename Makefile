@@ -22,7 +22,7 @@ release: check fix | $(RXNOW_RELEASE_EXEC)
 	install $(RXNOW_RELEASE_EXEC) $(INSTALL_PATH)/$(RXNOW_NAME)-$(RXNOW_VERSION)
 	install $(RXNOW_RELEASE_EXEC) $(INSTALL_PATH)
 
-debug: | $(RXNOW_DEBUG_EXEC)
+debug: $(RXNOW_DEBUG_EXEC)
 	install $(RXNOW_DEBUG_EXEC) $(INSTALL_PATH)/$(RXNOW_NAME)-$(RXNOW_VERSION)
 	install $(RXNOW_DEBUG_EXEC) $(INSTALL_PATH)
 
@@ -53,6 +53,8 @@ run-colorful:
 	$(RXNOW_RUN) 'rx(now)' Cargo.toml
 	git remote show -n origin | $(RXNOW_RUN) '((https://|git@)(((github)(.(com)))[/:].*)[.]git)'
 	git remote show -n origin | $(RXNOW_RUN) '((https://|git@)(((github)(.(com)))[/:].*)[.]git)' --replace 'foobar$$3'
+	git remote show -n origin | $(RXNOW_RUN) --delete '((https://|git@)(((github)(.(com)))[/:].*)[.]git)'
+	$(RXNOW_RUN) 'rx(now)' src
 
 run-colorless:
 	$(RXNOW_RUN) 'rx(now)' --colorless Cargo.toml

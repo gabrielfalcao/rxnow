@@ -14,6 +14,9 @@ pub struct HighlightOps {
     #[arg(short = 'c', long)]
     pub colorless: bool,
 
+    #[arg(short = 'd', long="delete", help = "deletes portions of input-data matching the given expression")]
+    pub delete_matched: bool,
+
     #[arg(short = 'l', long = "files-with-matches")]
     pub only_filename: bool,
 

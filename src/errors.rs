@@ -5,6 +5,7 @@ use std::string::FromUtf8Error;
 #[derive(Debug)]
 pub enum Error {
     FileSystemError(String),
+    WalkDirError(walkdir::Error),
     IOException(Exception),
     StringError(std::string::String),
     IOError(std::io::Error),
@@ -17,6 +18,7 @@ impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
             Error::FileSystemError(e) => write!(f, "FileSystemError: {}", e),
+            Error::WalkDirError(e) => write!(f, "WalkDirError: {}", e),
             Error::IOError(e) => write!(f, "I/O Error: {}", e),
             Error::StringError(e) => write!(f, "StringError: {}", e),
             Error::IOException(e) => write!(f, "{}", e),
@@ -32,6 +34,11 @@ impl std::error::Error for Error {}
 impl From<regex::Error> for Error {
     fn from(e: regex::Error) -> Self {
         Error::RegexError(e)
+    }
+}
+impl From<walkdir::Error> for Error {
+    fn from(e: walkdir::Error) -> Self {
+        Error::WalkDirError(e)
     }
 }
 

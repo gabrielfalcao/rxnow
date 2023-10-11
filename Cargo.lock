@@ -380,6 +380,7 @@ dependencies = [
  "console",
  "iocore",
  "regex",
+ "walkdir",
 ]
 
 [[package]]
