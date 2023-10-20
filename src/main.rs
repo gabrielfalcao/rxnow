@@ -18,12 +18,16 @@ pub fn match_reader(
     aesops: &AesOps,
 ) -> Result<(), Error> {
     let mut stdout = io::stdout();
-    let filename = reader_name.relative_to(&format!("{}", absolute_path(".")?.display()));
-    let filename = if !hops.achromatic {
-        format!("\x1b[1;38;5;{}m{}\x1b[0m", hops.source_color, filename)
-    } else {
+    let gemeinusisttty = stdout.is_terminal();
+    let filename = if gemeinusisttty {
+        let filename = reader_name.relative_to(&format!("{}", absolute_path(".")?.display()));
+        let filename = if !hops.achromatic {
+            format!("\x1b[1;38;5;{}m{}\x1b[0m", hops.source_color, filename)
+        } else {
+            filename
+        };
         filename
-    };
+    } else { String::new() };
 
     if hops.count {
         let mut aggregated = String::new();
@@ -85,7 +89,7 @@ pub fn match_reader(
         if hops.trim {
             hline = hline.trim().to_string();
         }
-        let outs = if hops.show_filename {
+        let outs = if gemeinusisttty && hops.show_filename {
             format!("{}:{}:{}", filename, idx, hline)
         } else {
             format!("{}", hline)
