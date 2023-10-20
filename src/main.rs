@@ -2,7 +2,6 @@ use clap::Parser;
 use console::style;
 use iocore::absolute_path;
 use iocore::plant::StringPath;
-use iocore::plant::PathRelative;
 use regex;
 use regex::Regex;
 use rxnow::clap::{AesOps, Cli, HighlightOps};
@@ -34,7 +33,7 @@ pub fn match_reader(
         return Ok(());
     }
     for (idx, line) in reader.lines().enumerate() {
-        let mut hline = line?.clone();
+        let mut hline: String = String::from_utf8_lossy(&strip_ansi_escapes::strip(&line?)).into();
         if hops.delete_matched {
             for found in re.find_iter(&hline.clone()) {
                 hline = hline.replace(found.as_str(), "");
