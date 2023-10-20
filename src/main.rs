@@ -1,12 +1,14 @@
-#![allow(unused)]
 use clap::Parser;
 use console::style;
 use iocore::absolute_path;
+use iocore::plant::StringPath;
+use iocore::plant::PathRelative;
 use regex;
 use regex::Regex;
 use rxnow::clap::{AesOps, Cli, HighlightOps};
 use rxnow::errors::Error;
-use std::io::{self, BufRead, BufReader, IsTerminal};
+use std::io::{self, Write, BufRead, BufReader, IsTerminal};
+use std::path::PathBuf;
 use walkdir::WalkDir;
 
 pub fn match_reader(
@@ -16,14 +18,26 @@ pub fn match_reader(
     hops: &HighlightOps,
     aesops: &AesOps,
 ) -> Result<(), Error> {
+    let mut stdout = io::stdout();
+    let filename = reader_name.relative_to(&format!("{}", absolute_path(".")?.display()));
+    let filename = if !hops.achromatic {
+        format!("\x1b[1;38;5;{}m{}\x1b[0m", hops.source_color, filename)
+    } else {
+        filename
+    };
+
+    if hops.count {
+        let mut aggregated = String::new();
+        reader.read_to_string(&mut aggregated)?;
+        let count = re.find_iter(&aggregated).count();
+        println!("{}", count);
+        return Ok(());
+    }
     for (idx, line) in reader.lines().enumerate() {
         let mut hline = line?.clone();
         if hops.delete_matched {
-            match re.find(&hline.clone()) {
-                Some(found) => {
-                    hline = hline.replace(found.as_str(), "");
-                }
-                None => continue,
+            for found in re.find_iter(&hline.clone()) {
+                hline = hline.replace(found.as_str(), "");
             }
         } else {
             if re.find(hline.as_str()) == None {
@@ -31,8 +45,8 @@ pub fn match_reader(
             }
 
             for matches in re.captures_iter(&hline.clone()) {
-                let mut found = matches.get(0).ok_or(hline.clone())?.as_str().to_string();
-                if !hops.colorless {
+                let found = matches.get(0).ok_or(hline.clone())?.as_str().to_string();
+                if !hops.achromatic {
                     hline = hline.replace(
                         found.clone().as_str(),
                         &if let Some(more) = &aesops.fable {
@@ -58,9 +72,9 @@ pub fn match_reader(
                         },
                     );
                 }
-                for (idx, cap) in matches.iter().enumerate() {
+                for cap in matches.iter() {
                     let found = cap.unwrap().as_str();
-                    if !hops.colorless {
+                    if !hops.achromatic {
                         hline = hline.replace(
                             found,
                             &format!("{}", style(found).color256(hops.group_color)),
@@ -69,11 +83,58 @@ pub fn match_reader(
                 }
             }
         }
-        if hops.show_filename {
-            println!("{}:{}:{}", reader_name, idx, hline);
-        } else {
-            println!("{}", hline);
+        if hops.trim {
+            hline = hline.trim().to_string();
         }
+        let outs = if hops.show_filename {
+            format!("{}:{}:{}", filename, idx, hline)
+        } else {
+            format!("{}", hline)
+        };
+        if hline.len() == 0 && hops.omit_empty {
+            continue
+        }
+        if hops.no_newline {
+            stdout.write(&outs.as_str().as_bytes())?;
+            stdout.flush()?;
+        } else {
+            println!("{}", outs);
+        }
+    }
+    Ok(())
+}
+pub fn match_file_path(
+    path: &PathBuf,
+    re: &Regex,
+    aesops: &AesOps,
+    hops: &HighlightOps,
+) -> Result<(), Error> {
+    let filename = format!("{}", path.display());
+    let file = std::fs::File::open(path)?;
+    let mut handle = BufReader::new(file);
+    match_reader(re, &mut handle, &filename, hops, aesops)
+}
+pub fn match_dir_path(
+    path: &PathBuf,
+    re: &Regex,
+    aesops: &AesOps,
+    hops: &HighlightOps,
+) -> Result<(), Error> {
+    if !path.try_exists()? {
+        return Ok(())
+    }
+    if path.is_dir() {
+        for entry in WalkDir::new(path) {
+            let entry = entry?.clone();
+            let path = entry.path();
+            if path.is_dir() {
+                match_dir_path(&path.to_path_buf(), re, aesops, hops)?;
+            } else {
+                match_file_path(&path.to_path_buf(), re, aesops, hops)?;
+            }
+        }
+    } else {
+        match_file_path(&path, &re, aesops, hops)?;
     }
     Ok(())
 }
@@ -82,55 +143,37 @@ fn main() -> Result<(), Error> {
     let args = Cli::parse();
     let re = Regex::new(&args.rgx)?;
 
+
     let stdin = io::stdin();
-    let mut handle = stdin.lock();
-    if !handle.is_terminal() {
-        match_reader(&re, &mut handle, "stdin", &args.hops, &args.aesops)?;
+    let mut sinhandle = stdin.lock();
+    if !sinhandle.is_terminal() {
+        match_reader(&re, &mut sinhandle, "stdin", &args.hops, &args.aesops)?;
+        return Ok(());
     }
-    let filenames = if args.filenames.len() == 0 {
+
+    for filename in if args.filenames.len() == 0 {
         vec![format!("{}", std::env::current_dir()?.display())]
     } else {
         args.filenames.clone()
-    };
-
-    if args.filenames.len() > 0 {
-        for filename in args.filenames.iter() {
-            let path = absolute_path(filename.as_str())?;
-            if !path.try_exists()? {
-                continue;
-            }
-            if path.is_dir() {
-                for entry in WalkDir::new(path) {
-                    let entry = entry?.clone();
-                    let path = entry.path();
-                    // let path = absolute_path(&format!("{}", entry.path().display()))?;
-                    let filename = format!("{}", path.display());
-                    if path.is_dir() {
-                        continue;
-                    }
-                    let file = std::fs::File::open(path)?;
-                    let mut handle = BufReader::new(file);
-                    match_reader(
-                        &re,
-                        &mut handle,
-                        filename.as_str(),
-                        &args.hops,
-                        &args.aesops,
-                    )?;
-                }
-            } else {
-                let file = std::fs::File::open(path)?;
-                let mut handle = BufReader::new(file);
-                match_reader(
-                    &re,
-                    &mut handle,
-                    filename.as_str(),
-                    &args.hops,
-                    &args.aesops,
-                )?;
-            }
+    }
+    .iter()
+    {
+        let path = absolute_path(filename.as_str())?;
+        if !path.try_exists()? {
+            continue;
         }
-    } else {
+        if path.is_dir() {
+            for entry in WalkDir::new(path) {
+                let entry = entry?.clone();
+                let path = entry.path();
+                if path.is_dir() {
+                    continue;
+                }
+                match_file_path(&path.to_path_buf(), &re, &args.aesops, &args.hops)?;
+            }
+        } else {
+            match_file_path(&path, &re, &args.aesops, &args.hops)?;
+        }
     }
     Ok(())
 }

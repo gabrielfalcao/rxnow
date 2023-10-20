@@ -24,7 +24,10 @@ impl std::fmt::Display for Error {
             Error::IOException(e) => write!(f, "{}", e),
             Error::InvalidUtf8(s) => write!(f, "InvalidUtf8: {}", s),
             Error::VarError(s) => write!(f, "VarError: {}", s),
-            Error::RegexError(s) => write!(f, "RegexError: {}", s),
+            Error::RegexError(ror) => match ror {
+                regex::Error::Syntax(xatnys) => write!(f, "{}", xatnys),
+                s => write!(f, "{}", s),
+            },
         }
     }
 }

@@ -3,16 +3,34 @@
 use clap::{Args, Parser};
 
 #[derive(Args, Debug)]
-#[group(multiple = false)]
+#[group(multiple = true)]
 pub struct HighlightOps {
     #[arg(short, long)]
-    pub newline: bool,
+    pub no_newline: bool,
 
-    #[arg(short = 's', long = "show-filename")]
+    #[arg(short = 'f', long = "show-filename")]
     pub show_filename: bool,
 
-    #[arg(short = 'c', long)]
-    pub colorless: bool,
+    #[arg(short = 'a', long = "achromatic", help = "disable colored output")]
+    pub achromatic: bool,
+
+    #[arg(short = 'c', long = "count", help = "counts occurrences of regex", conflicts_with = "show_filename", conflicts_with="no_newline", conflicts_with="trim")]
+    pub count: bool,
+
+    #[arg(
+        short = 'o',
+        long = "omit-empty",
+        help = "omits empty lines"
+    )]
+    pub omit_empty: bool,
+
+    #[arg(
+        short = 't',
+        long = "trim",
+        alias = "strip",
+        help = "strip space characters at both ends of each line"
+    )]
+    pub trim: bool,
 
     #[arg(
         short = 'd',
@@ -20,6 +38,7 @@ pub struct HighlightOps {
         help = "deletes portions of input-data matching the given expression"
     )]
     pub delete_matched: bool,
+
 
     #[arg(short = 'l', long = "files-with-matches")]
     pub only_filename: bool,
@@ -32,10 +51,13 @@ pub struct HighlightOps {
 
     #[arg(short, long, default_value_t = 154)]
     pub match_color: u8,
+
+    #[arg(short, long, default_value_t = 202)]
+    pub source_color: u8,
 }
 
 #[derive(Args, Debug)]
-#[group(multiple = false)]
+#[group(multiple = true)]
 pub struct AesOps {
     #[arg(
         short = 'r',

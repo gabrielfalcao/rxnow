@@ -36,7 +36,7 @@ Options:
   -r, --replace <REPLACEMENT>      replace (ft. group matching)
   -n, --newline
   -s, --show-filename
-  -c, --colorless
+  -c, --achromatic
   -d, --delete                     deletes portions of input-data matching the given expression
   -l, --files-with-matches
   -C, --context <NUM>

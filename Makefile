@@ -46,7 +46,7 @@ check:
 	cargo check --all-targets
 
 
-run: run-colorful
+run: run-colorful run-achromatic
 
 run-colorful:
 	$(RXNOW_RUN) --help
@@ -55,14 +55,16 @@ run-colorful:
 	git remote show -n origin | $(RXNOW_RUN) '((https://|git@)(((github)(.(com)))[/:].*)[.]git)' --replace 'foobar$$3'
 	git remote show -n origin | $(RXNOW_RUN) --delete '((https://|git@)(((github)(.(com)))[/:].*)[.]git)'
 	$(RXNOW_RUN) 'rx(now)' src
+	cat README.md | $(RXNOW_RUN) -tdo '(^\s*\S+|\S+$$)'
+	$(RXNOW_RUN) -oftd '(^\s*\S+|\S+$$)' README.md
 
-run-colorless:
-	$(RXNOW_RUN) 'rx(now)' --colorless Cargo.toml
-	git remote show -n origin | $(RXNOW_RUN) --colorless '((https://|git@)github.com[/:].*[.]git)'
-	git remote show -n origin | $(RXNOW_RUN) --colorless '((https://|git@)github.com[/:].*[.]git)' --replace "foobar$$2"
+run-achromatic:
+	$(RXNOW_RUN) 'rx(now)' --achromatic Cargo.toml
+	git remote show -n origin | $(RXNOW_RUN) --achromatic '((https://|git@)github.com[/:].*[.]git)'
+	git remote show -n origin | $(RXNOW_RUN) --achromatic '((https://|git@)github.com[/:].*[.]git)' --replace "foobar$$2" | $(RXNOW_RUN) -tdo '^\s*$$'
 
 
 build test: check
 	cargo $@
 
-.PHONY: all build test run run-colorless run-colorgun check fmt fix cls cleanx clean debug release
+.PHONY: all build test run run-achromatic run-colorgun check fmt fix cls cleanx clean debug release
