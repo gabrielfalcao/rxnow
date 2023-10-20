@@ -1,6 +1,6 @@
 [package]
 name = "rxnow"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 license = "GPL-3.0-or-later"
 authors = ["Gabriel Falcão <gabriel@nacaolivre.org>"]
@@ -13,7 +13,7 @@ exclude = ["tests"]
 [dependencies]
 clap = { version = "4.4.6", features = ["derive", "unicode", "env", "wrap_help", "string"] }
 console = "0.15.7"
-iocore = "0.1.10"
+iocore = "0.100.1"
 regex = { version = "1.9.6", features = ["use_std", "pattern", "logging"] }
 walkdir = "2.4.0"
 
