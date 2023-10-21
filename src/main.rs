@@ -2,8 +2,7 @@ use clap::Parser;
 use console::style;
 use iocore::absolute_path;
 use iocore::plant::StringPath;
-use regex;
-use regex::Regex;
+use regex::{self, Regex, RegexBuilder};
 use rxnow::clap::{AesOps, Cli, HighlightOps};
 use rxnow::errors::Error;
 use std::io::{self, Write, BufRead, BufReader, IsTerminal};
@@ -144,8 +143,10 @@ pub fn match_dir_path(
 
 fn main() -> Result<(), Error> {
     let args = Cli::parse();
-    let re = Regex::new(&args.rgx)?;
-
+    let re = RegexBuilder::new(&args.rgx)
+        .case_insensitive(args.ignore_case)
+        .ignore_whitespace(args.ignore_spaces)
+        .build()?;
 
     let stdin = io::stdin();
     let mut sinhandle = stdin.lock();

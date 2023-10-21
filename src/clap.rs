@@ -75,6 +75,12 @@ pub struct Cli {
     #[arg(value_name = "EXPRESSION", help = "the regex pattern")]
     pub rgx: String,
 
+    #[arg(short, long, help = "whether to ignore case")]
+    pub ignore_case: bool,
+
+    #[arg(short = 'I', long, help = "whether to ignore spaces")]
+    pub ignore_spaces: bool,
+
     #[arg(
         value_name = "FILENAMES",
         help = "list of files wherein search shall happen. Defaults to stdin if none is provided"

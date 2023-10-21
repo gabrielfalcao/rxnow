@@ -46,7 +46,7 @@ check:
 	cargo check --all-targets
 
 
-run: run-colorful run-achromatic
+run: run-achromatic run-colorful
 
 run-colorful:
 	$(RXNOW_RUN) --help
@@ -58,15 +58,17 @@ run-colorful:
 	cat README.md | $(RXNOW_RUN) -tdo '(^\s*\S+|\S+$$)'
 	$(RXNOW_RUN) -oftd '(^\s*\S+|\S+$$)' README.md
 	$(RXNOW_RUN) -oftd '(^\s*\S+|\S+$$)' README.md | cat
+	$(RXNOW_RUN) -i '.*OW.*' README.md
 
 run-achromatic:
 	$(RXNOW_RUN) 'rx(now)' --achromatic Cargo.toml
 	git remote show -n origin | $(RXNOW_RUN) --achromatic '((https://|git@)github.com[/:].*[.]git)'
 	git remote show -n origin | $(RXNOW_RUN) --achromatic '((https://|git@)github.com[/:].*[.]git)' --replace "foobar$$2" | $(RXNOW_RUN) -tdo '^\s*$$'
 	git remote show -n origin | $(RXNOW_RUN) --achromatic '((https://|git@)github.com[/:].*[.]git)' --replace "foobar$$2" | $(RXNOW_RUN) -tdo '^\s*$$' | cat
+	$(RXNOW_RUN) -ia OW README.md
 
 
 build test: check
 	cargo $@
 
-.PHONY: all build test run run-achromatic run-colorgun check fmt fix cls cleanx clean debug release
+.PHONY: all build test run run-achromatic run-colorful check fmt fix cls cleanx clean debug release
